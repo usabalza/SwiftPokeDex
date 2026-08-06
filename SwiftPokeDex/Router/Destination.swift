@@ -5,9 +5,13 @@
 //  Created by Uziel Sabalza on 15/6/26.
 //
 
-public enum Destination: Hashable {
+public enum Destination: Hashable, Equatable {
+    public static func == (lhs: Destination, rhs: Destination) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+    
     case pokemonList
-    case pokemonDetail(_ pokemon: Pokemon)
+    case pokemonDetail(_ pokemon: PokemonDetail)
     
     public func hash(into hasher: inout Hasher) {
         switch self {

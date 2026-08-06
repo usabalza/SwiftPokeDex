@@ -6,43 +6,44 @@
 //
 
 protocol ServiceProtocol {
-    @MainActor func getPokemonList(url: String?, completion: @escaping (Result<([PokeAPIElement], String), NetworkError>) -> Void) async
-    @MainActor func getPokemonDetail(url: String, completion: @escaping (Result<Pokemon, NetworkError>) -> Void) async
-}
+    @MainActor func fetchPokemonList(limit: Int, offset: Int) async throws -> [PokemonRemoteItem]
+    @MainActor func fetchPokemonDetail(from urlString: String) async throws -> PokemonDetail
+    @MainActor func fetchDetailedPokemonList(limit: Int, offset: Int) async throws -> [PokemonDetail]
 
-enum Endpoints: String {
-    case pokemon = "https://pokeapi.co/api/v2/pokemon"
 }
 
 struct APIServices: ServiceProtocol {
     var networkManager = NetworkManager()
+    var baseUrl = "https://pokeapi.co/api/v2/pokemon"
     
-    func getPokemonList(url: String?, completion: @escaping (Result<([PokeAPIElement], String), NetworkError>) -> Void) async {
-        do {
-            if let nextUrl = url {
-                let response: PokeAPIResponse = try await networkManager.request(endpoint: nextUrl)
-                let pokemon = response.results
-                guard let next = response.next else { return }
-                completion(.success((pokemon, next)))
-            } else {
-                let response: PokeAPIResponse = try await networkManager.request(endpoint: Endpoints.pokemon.rawValue)
-                let pokemon = response.results
-                guard let next = response.next else { return }
-                completion(.success((pokemon, next)))
-            }
-        } catch {
-            completion(.failure(error as! NetworkError))
-        }
+    // 1. Obtener lista básica
+    func fetchPokemonList(limit: Int = 20, offset: Int = 0) async throws -> [PokemonRemoteItem] {
+        let urlString = "\(baseUrl)?limit=\(limit)&offset=\(offset)"
+        let response: PokemonListResponse = try await networkManager.request(endpoint: urlString)
+        return response.results
     }
-    
-    func getPokemonDetail(url: String, completion: @escaping (Result<Pokemon, NetworkError>) -> Void) async {
-        do {
-            let pokemon: Pokemon = try await networkManager.request(endpoint: url)
-            completion(.success(pokemon))
-            
-        } catch {
-            completion(.failure(error as! NetworkError))
-        }
+
+    // 2. Obtener detalle individual
+    func fetchPokemonDetail(from urlString: String) async throws -> PokemonDetail {
+        return try await networkManager.request(endpoint: urlString)
+    }
+
+    // 3. El TaskGroup se mantiene igual de eficiente, pero usando las funciones limpias
+    func fetchDetailedPokemonList(limit: Int = 20, offset: Int = 0) async throws -> [PokemonDetail] {
+        let remoteItems = try await fetchPokemonList(limit: limit, offset: offset)
         
+        return try await withThrowingTaskGroup(of: PokemonDetail.self) { group in
+            for item in remoteItems {
+                group.addTask {
+                    return try await self.fetchPokemonDetail(from: item.url)
+                }
+            }
+            
+            var pokemonDetails: [PokemonDetail] = []
+            for try await detail in group {
+                pokemonDetails.append(detail)
+            }
+            return pokemonDetails.sorted { $0.id < $1.id }
+        }
     }
 }

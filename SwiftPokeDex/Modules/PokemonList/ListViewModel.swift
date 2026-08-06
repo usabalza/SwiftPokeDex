@@ -12,47 +12,72 @@ class ListViewModel: ObservableObject {
     
     let services = APIServices()
     
-    @Published var pokemonArray: [PokeAPIElement] = []
-    @Published var selectedPokemon: Pokemon?
-    @Published var nextUrl: String?
-    var isLoading = false
+    @Published var pokemonList: [PokemonDetail] = []
+    @Published var isLoading = false
+    @Published var errorMessage: String? = nil
+    @Published var searchText = "" // 👈 Vinculado al buscador
     
-    func fetchPokemonList(_ url: String? = nil) async {
-        await services.getPokemonList(url: url) { result in
-            switch result {
-            case .success((let pokemonArray, let next)):
-                self.pokemonArray.append(contentsOf: pokemonArray)
-                self.nextUrl = next
-                self.isLoading = false
-            case .failure(let error):
-                print(error)
+    private var currentOffset = 0
+    private let limit = 20
+    
+    // 👈 Propiedad computada para filtrar la lista en tiempo real
+    var filteredPokemon: [PokemonDetail] {
+        if searchText.isEmpty {
+            return pokemonList
+        } else {
+            return pokemonList.filter { pokemon in
+                pokemon.name.localizedCaseInsensitiveContains(searchText) ||
+                String(pokemon.id).contains(searchText)
             }
         }
     }
     
-    func loadMoreIfNeeded(_ current: PokeAPIElement) async {
-        // Check if the item is near the end of the list
-        if pokemonArray.last == current {
-            await loadMore()
+    func loadPokemonPage() async {
+        guard !isLoading else { return } // Evita peticiones duplicadas
+        
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let newPokemon = try await services.fetchDetailedPokemonList(
+                limit: limit,
+                offset: currentOffset
+            )
+            
+            self.pokemonList.append(contentsOf: newPokemon)
+            self.currentOffset += limit // Prepara el offset para la siguiente página
+        } catch {
+            self.errorMessage = "Error al cargar los datos: \(error.localizedDescription)"
         }
+        
+        isLoading = false
     }
     
-    private func loadMore() async {
+    // 👈 Método para el Pull-to-Refresh
+    
+    func refreshData() async {
         guard !isLoading else { return }
         isLoading = true
+        errorMessage = nil
         
-        await fetchPokemonList(nextUrl)
-        
-    }
-    
-    func fetchPokemonDetail(url: String) async {
-        await services.getPokemonDetail(url: url) { result in
-            switch result {
-            case .success(let pokemon):
-                self.selectedPokemon = pokemon
-            case .failure(let error):
-                print(error)
-            }
+        do {
+            // 1. Descargamos el primer bloque (offset 0) en una variable local
+            let freshPokemon = try await services.fetchDetailedPokemonList(
+                limit: limit,
+                offset: 0
+            )
+            
+            // 2. Si la red responde bien, reiniciamos los estados de la paginación
+            self.currentOffset = limit
+            
+            // 3. Reemplazamos la lista completa de un solo golpe
+            // Esto evita que la UI se quede vacía a mitad de la petición de red
+            self.pokemonList = freshPokemon
+            
+        } catch {
+            self.errorMessage = "Error al refrescar: \(error.localizedDescription)"
         }
+        
+        isLoading = false
     }
 }

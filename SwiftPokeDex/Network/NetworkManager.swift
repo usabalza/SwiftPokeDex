@@ -32,7 +32,6 @@ enum HTTPMethod {
 }
 
 struct NetworkManager {
-    // private let baseUrl = "https://pokeapi.co/api/v2/"
     
     func request<T:Decodable>(
         endpoint: String,

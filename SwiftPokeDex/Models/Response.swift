@@ -7,15 +7,11 @@
 
 import Foundation
 
-struct PokeAPIResponse: Codable {
-    let count: Int
-    let next: String?
-    let previous: String?
-    let results: [PokeAPIElement]
+struct PokemonListResponse: Codable {
+    let results: [PokemonRemoteItem]
 }
 
-struct PokeAPIElement: Codable, Identifiable, Equatable {
-    var id = UUID()
+struct PokemonRemoteItem: Codable {
     let name: String
     let url: String
     

@@ -12,61 +12,68 @@ struct ListView: View {
     @StateObject var viewModel: ListViewModel
     @State var search: String = ""
     
-    var searchResults: [PokeAPIElement] {
+    // 1. Generamos identificadores estables y únicos para la carga inicial
+    private let initialPlaceholders = (0..<6).map { _ in UUID() }
+    // 2. Generamos identificadores para la carga al hacer scroll (paginación)
+    private let paginationPlaceholders = (0..<2).map { _ in UUID() }
+    
+    var searchResults: [PokemonDetail] {
         if search.isEmpty {
-            return viewModel.pokemonArray
+            return viewModel.pokemonList
         } else {
-            return viewModel.pokemonArray.filter { $0.name.contains(search.lowercased()) }
+            return viewModel.pokemonList.filter { $0.name.contains(search.lowercased()) }
         }
     }
     
     var body: some View {
-        VStack {
-            Text("Bienvenido a la PokeDex de SwiftUI!")
-                .font(.headline)
-                .padding()
-            
-            List {
-                ForEach(searchResults) { pokemon in
-                    Button {
-                        print("Navegando a...")
-                        Task {
-                            await viewModel.fetchPokemonDetail(url: pokemon.url)
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                if viewModel.pokemonList.isEmpty && viewModel.isLoading {
+                    ForEach(initialPlaceholders, id: \.self) { _ in
+                        PokemonRowPlaceholder()
+                    }
+                } else {
+                    ForEach(viewModel.filteredPokemon) { pokemon in
+                        // Tu celda personalizada que ya creaste
+                        Button {
+                            router.push(to: .pokemonDetail(pokemon))
+                            print(pokemon)
+                        } label: {
+                            ListCell(pokemon: pokemon)
                         }
-                        
-                    } label: {
-                        ListCell(pokemon: pokemon)
-                            .onAppear {
-                                Task {
-                                    await viewModel.loadMoreIfNeeded(pokemon)
-                                }
+                        .buttonStyle(.plain)
+                        .onAppear {
+                            // Paginación: Si llegamos al último, cargamos más
+                            if pokemon.id == viewModel.pokemonList.last?.id {
+                                Task { await viewModel.loadPokemonPage() }
                             }
+                        }
                     }
-                    .contentShape(Rectangle())
-                    .tint(.primary)
-                }
-                
-                if viewModel.isLoading {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
+                    if viewModel.isLoading && !viewModel.pokemonList.isEmpty {
+                        ForEach(paginationPlaceholders, id: \.self) { _ in
+                            PokemonRowPlaceholder()
+                        }
                     }
                 }
-            }
-            .onChange(of: viewModel.selectedPokemon) {
-                guard let pokemon = viewModel.selectedPokemon else { return }
-                router.push(to: .pokemonDetail(pokemon))
-            }
-            .searchable(text: $search)
-            .refreshable {
-                await viewModel.fetchPokemonList()
                 
             }
         }
+        .navigationTitle("Swift PokéDex for iOS")
+        // 1. 👇 AÑADE EL BUSCADOR NATIVO
+        .searchable(
+            text: $viewModel.searchText,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: "Buscar por nombre o número..."
+        )
+        // 2. 👇 AÑADE EL PULL TO REFRESH NATIVO
+        .refreshable {
+            await viewModel.refreshData()
+        }
         .task {
-            viewModel.pokemonArray.removeAll()
-            await viewModel.fetchPokemonList()
+            // Carga inicial al abrir la app
+            if viewModel.pokemonList.isEmpty {
+                await viewModel.loadPokemonPage()
+            }
         }
     }
 }
