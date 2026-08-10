@@ -92,8 +92,10 @@ extension ListView {
     @ViewBuilder
     private var pokemonListContent: some View {
         let displayList = viewModel.filteredPokemon(favoriteIds: favoriteIds)
-        
-        if displayList.isEmpty && viewModel.isLoading && viewModel.selectedTag == .all {
+        if viewModel.selectedTag == .favorites && displayList.isEmpty {
+            emptyListPlaceholder // 👈 Inyectamos el estado vacío limpio
+        }
+        else if displayList.isEmpty && viewModel.isLoading && viewModel.selectedTag == .all {
             initialLoadPlaceholders
         } else {
             mainListView(displayList: displayList)
@@ -106,6 +108,25 @@ extension ListView {
         ForEach(initialPlaceholders, id: \.self) { _ in
             PokemonRowPlaceholder()
         }
+    }
+    
+    @ViewBuilder
+    private var emptyListPlaceholder: some View {
+        // Componente nativo de Apple para estados vacíos (iOS 17+)
+        ContentUnavailableView {
+            // Icono principal estilizado
+            Label("No hay favoritos", systemImage: "heart.slash")
+                .font(.title2)
+                .bold()
+                .foregroundColor(.secondary)
+        } description: {
+            Text("Los Pokémon que marques con un corazón aparecerán en esta sección de forma permanente.")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+        }
+        .padding(.top, 60) // Desplaza el contenido un poco hacia el centro de la pantalla
     }
     
     /// Bucle principal encargado de pintar las celdas reales y los esqueletos inferiores de paginación
@@ -124,7 +145,7 @@ extension ListView {
                 )
             }
             .buttonStyle(.plain)
-
+            
             
             .onAppear {
                 // Lógica de paginación proactiva controlada
