@@ -10,21 +10,31 @@ import SwiftUI
 struct ListCell: View {
     
     var pokemon: PokemonDetail
-    @State var isFavorite: Bool = false
+    var isFavorite: Bool
+    var onFavorite: (PokemonDetail, Bool) -> Void
     
     var body: some View {
+        
         VStack(alignment: .leading) {
-            HStack {
-                AsyncImage(url: URL(string: pokemon.sprites.frontDefault)) { image in
-                    image
-                        .resizable()
-                        .scaledToFit()
-                } placeholder: {
-                    // Tu esqueleto animado (Shimmer) que repara el bug visual previo
+            HStack(spacing: 16) {
+                ZStack {
                     Circle()
-                        .fill(Color(.systemGray5))
+                        .fill(Color(.systemGray6))
+                        .frame(width: 60, height: 60)
+                    
+                    AsyncImage(url: URL(string: pokemon.sprites.frontDefault)) { image in
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    } placeholder: {
+                        // Tu esqueleto animado (Shimmer) que repara el bug visual previo
+                        Circle()
+                            .fill(Color(.systemGray5))
+                    }
+                    .frame(width: 60, height: 60)
+                    
                 }
-                .frame(width: 60, height: 60)
+                
                 
                 VStack(alignment: .leading) {
                     Text("#\(String(format: "%03d", pokemon.id))")
@@ -36,12 +46,10 @@ struct ListCell: View {
                     TypeCapsule(types: pokemon.types)
                 }
                 
-                
-                
                 Spacer()
                 HStack(spacing: 12) {
                     Button {
-                        isFavorite.toggle()
+                        onFavorite(pokemon, isFavorite)
                     } label: {
                         Image(systemName: isFavorite ? "heart.fill" : "heart")
                             .foregroundStyle(isFavorite ? .red : .black)
@@ -56,7 +64,6 @@ struct ListCell: View {
                 }
                 
             }
-            .padding(.horizontal, 10)
             .contentShape(Rectangle())
         }
         .padding(20)

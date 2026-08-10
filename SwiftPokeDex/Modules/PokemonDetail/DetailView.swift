@@ -17,7 +17,7 @@ struct DetailView: View {
             Text("#\(pokemon.id) - \(pokemon.name.capitalized)")
                 .font(.largeTitle)
             
-            //AsyncImage(url: URL(string: pokemon.sprites.frontDefault))
+            AsyncImage(url: URL(string: pokemon.sprites.frontDefault))
         }
         
         TypeCapsule(types: pokemon.types)

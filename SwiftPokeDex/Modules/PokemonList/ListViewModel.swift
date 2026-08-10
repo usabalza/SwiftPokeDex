@@ -8,6 +8,11 @@
 import SwiftUI
 import Combine
 
+enum ListFilterTag: String, CaseIterable {
+    case all = "Todos"
+    case favorites = "Favoritos"
+}
+
 class ListViewModel: ObservableObject {
     
     let services = APIServices()
@@ -16,16 +21,24 @@ class ListViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String? = nil
     @Published var searchText = "" // 👈 Vinculado al buscador
+    @Published var selectedTag: ListFilterTag = .all // 👈 Tag seleccionado por defecto
     
     private var currentOffset = 0
     private let limit = 20
     
     // 👈 Propiedad computada para filtrar la lista en tiempo real
-    var filteredPokemon: [PokemonDetail] {
+    func filteredPokemon(favoriteIds: [Int]) -> [PokemonDetail] {
+        // 1. Primero filtramos según el Tag ("Todos" o "Favoritos")
+        var baseList = pokemonList
+        if selectedTag == .favorites {
+            baseList = pokemonList.filter { favoriteIds.contains($0.id) }
+        }
+        
+        // 2. Después aplicamos el filtro de texto de la barra de búsqueda
         if searchText.isEmpty {
-            return pokemonList
+            return baseList
         } else {
-            return pokemonList.filter { pokemon in
+            return baseList.filter { pokemon in
                 pokemon.name.localizedCaseInsensitiveContains(searchText) ||
                 String(pokemon.id).contains(searchText)
             }

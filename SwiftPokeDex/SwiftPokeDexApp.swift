@@ -11,19 +11,7 @@ import SwiftData
 @main
 struct SwiftPokeDexApp: App {
     @StateObject private var router = Router()
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
+    
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
@@ -41,6 +29,6 @@ struct SwiftPokeDexApp: App {
             }
             .environmentObject(router)
         }
-        //.modelContainer(sharedModelContainer)
+        .modelContainer(for: FavoritePokemon.self)
     }
 }

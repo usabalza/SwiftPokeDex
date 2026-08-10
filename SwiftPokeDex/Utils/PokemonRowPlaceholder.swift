@@ -13,7 +13,7 @@ struct PokemonRowPlaceholder: View {
             // Círculo para simular el sprite
             Circle()
                 .fill(Color.gray)
-                .frame(width: 50, height: 50)
+                .frame(width: 60, height: 60)
             
             VStack(alignment: .leading, spacing: 8) {
                 // Rectángulo para simular el número/id
