@@ -24,59 +24,59 @@ A premium iOS application serving as an interactive Pokédex that consumes the *
 
 ---
 
-## 🛠️ Stack Tecnológico & Arquitectura
+## 🛠️ Technology Stack & Architecture
 
-* **Lenguaje**: Swift 6 (Modo de Concurrencia Estricta habilitado).
-* **Framework Principal**: SwiftUI (Soporte nativo para iOS 17+).
-* **Arquitectura**: MVVM-C (Model-View-ViewModel + Router/Coordinator).
-* **Concurrencia**: Moderna (`async/await` y estructurada mediante `withThrowingTaskGroup` para descargas masivas en paralelo).
-* **Persistencia**: SwiftData (Contextos atómicos con `try modelContext.save()`).
-* **Visualización de Datos**: SwiftCharts.
+* **Language**: Swift 6 (Strict Concurrency Mode enabled).
+* **Main Framework**: SwiftUI (Native support for iOS 17+).
+* **Architecture**: MVVM-C (Model-View-ViewModel + Router/Coordinator).
+* **Concurrency**: Modern (`async/await` and structured concurrency using `withThrowingTaskGroup` for parallel batch downloads).
+* **Persistence**: SwiftData (Atomic contexts using `try modelContext.save()`).
+* **Data Visualization**: SwiftCharts.
 
 ### Estructura del Proyecto (Screaming Architecture)
 ```text
 📁 PokeDexApp
-├── 📁 App            # Ciclo de vida raíz (@main) e inyección del Router Central
-├── 📁 Network        # Cliente genérico desacoplado mediante Protocolos (SOLID)
-├── 📁 Router         # Gestión declarativa de rutas (NavigationPath)
-├── 📁 Shared         # Modelos compartidos persistentes (SwiftData)
-├── 📁 Utils          # Vistas genéricas y modificadores reutilizables (Shimmer, Empty States)
-├── 📁 Extensions     # Extensiones del sistema (Paletas de colores dinámicas por tipo)
-└── 📁 Modules        # Encapsulación de código por pantallas (Módulo Autocontenido)
-    ├── 📁 PokemonList   # Modelos, Views (optimizadas con @ViewBuilder) y ViewModels de la lista
-    └── 📁 PokemonDetail # Ficha técnica densa dividida en Sub-Views con Aislamiento de Identidad
+├── 📁 App            # Root lifecycle (@main) and Central Router injection
+├── 📁 Network        # Generic client decoupled via protocols (SOLID)
+├── 📁 Router         # Declarative route management (NavigationPath)
+├── 📁 Models         # Persistent Shared Models (SwiftData)
+├── 📁 Utils          # Generic views and reusable modifiers (Shimmer, Empty States)
+├── 📁 Extensions     # Extension for entering colors in hexadecimal notation
+└── 📁 Modules        # Code encapsulation by screens (Self-contained module)
+    ├── 📁 PokemonList   # List Models, Views (optimized with @ViewBuilder), and ViewModels
+    └── 📁 PokemonDetail # Dense data sheet divided into sub-views with identity isolation.
 ```
 
 ---
 
-## 🧪 Calidad de Software & Testing
+## 🧪 Software Quality & Testing
 
-El proyecto se encuentra blindado contra regresiones utilizando los frameworks de pruebas más modernos del ecosistema Apple. Se implementa **Inyección de Dependencias** a través de contratos (`APIServiceProtocol`) para garantizar pruebas 100% deterministas sin llamadas reales a internet.
+The project is safeguarded against regressions using the most modern testing frameworks in the Apple ecosystem. **Dependency Injection** is implemented via contracts (`APIServiceProtocol`) to ensure 100% deterministic tests without making actual network calls.
 
-### 🧬 Pruebas Unitarias (**Swift Testing**)
-* Cobertura de flujos asíncronos y captura formal de errores.
-* **Tests Parametrizados (`arguments: [...]`)** para probar múltiples combinaciones del buscador en una sola función lógica.
-* Validación de aislamiento de hilos mediante sincronización estricta en el `@MainActor`.
+### 🧬 Unit Tests (**Swift Testing**)
+* Coverage of asynchronous flows and formal error handling.
+* **Parameterized tests (`arguments: [...]`)** to test multiple search scenarios within a single logical function.
+* Thread isolation validation via strict synchronization on the `@MainActor`.
 
-### 📱 Pruebas de Interfaz (**UI Tests / XCTest**)
-* Simulación de flujos de usuario reales (Escritura, Taps, Desplazamientos).
-* Navegación automatizada basada en **`accessibilityIdentifier`** para inmunidad ante cambios de diseño o internacionalización de textos.
+### 📱 UI Tests (**UI Tests / XCTest**)
+* Simulation of real user flows (typing, tapping, scrolling).
+* Automated navigation based on **`accessibilityIdentifier`** to ensure resilience against design changes or text localization.
 
 ---
 
-## 🔧 Instrucciones de Instalación
+## 🔧 Installation instructions
 
-1. Clona este repositorio:
+1. Clone this repository:
    ```bash
    git clone https://github.com
    ```
-2. Abre el archivo `PokeDexApp.xcodeproj` o `PokeDexApp.xcworkspace` en **Xcode** (Se requiere Xcode 15 o superior).
-3. Selecciona tu simulador preferido con **iOS 17.0+** y presiona `Cmd + R` para ejecutar.
-4. Para correr la suite completa de pruebas unitarias y de interfaz, presiona `Cmd + U`.
+2. Open the `PokeDexApp.xcodeproj` or `PokeDexApp.xcworkspace` file in **Xcode** (Xcode 15 or later is required).
+3. Select your preferred simulator running **iOS 17.0+** and press `Cmd + R` to run the app.
+4. To run the full suite of unit and UI tests, press `Cmd + U`.
 
 ---
 
-## ✒️ Autor
+## ✒️ Author
 
-* **Tu Nombre** - *Desarrollador iOS* - [Tu LinkedIn](https://linkedin.com) | [Tu Portafolio Web](https://tu-web.com)
+* **Uziel Sabalza** - *iOS Developer* - [Tu LinkedIn](https://linkedin.com) | [Tu Portafolio Web](https://tu-web.com)
 
