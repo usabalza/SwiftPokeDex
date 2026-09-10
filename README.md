@@ -78,5 +78,5 @@ The project is safeguarded against regressions using the most modern testing fra
 
 ## ✒️ Author
 
-* **Uziel Sabalza** - *iOS Developer* - [Tu LinkedIn](https://linkedin.com) | [Tu Portafolio Web](https://tu-web.com)
+* **Uziel Sabalza** - *iOS Developer* - [LinkedIn](https://www.linkedin.com/in/uziel-sabalza-a535b6214) | [Tu Portafolio Web](https://tu-web.com)
 
