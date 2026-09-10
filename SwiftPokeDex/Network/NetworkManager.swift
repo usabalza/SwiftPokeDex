@@ -20,7 +20,6 @@ enum HTTPMethod {
     case put(body: Encodable?)
     case delete
     
-    // Retorna el string que requiere URLRequest
     var name: String {
         switch self {
         case .get: return "GET"
@@ -43,22 +42,15 @@ struct NetworkManager {
             
             var request = URLRequest(url: url)
             request.httpMethod = method.name
-            
-            // Configuración por defecto para JSON
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.setValue("application/json", forHTTPHeaderField: "Accept")
-            
-            // Inyectar encabezados personalizados si existen (ej. Tokens de autenticación)
             headers?.forEach { key, value in
                 request.setValue(value, forHTTPHeaderField: key)
             }
-            
-            // Configurar el cuerpo según el método HTTP elegido
             switch method {
             case .post(let body), .put(let body):
                 if let body = body {
                     do {
-                        // Codifica cualquier objeto Encodable a datos binarios JSON
                         request.httpBody = try JSONEncoder().encode(body)
                     } catch {
                         throw NetworkError.serializationError

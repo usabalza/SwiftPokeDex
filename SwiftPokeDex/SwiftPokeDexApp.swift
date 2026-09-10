@@ -15,15 +15,13 @@ struct SwiftPokeDexApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                let viewModel = ListViewModel()
-                ListView(viewModel: viewModel)
+                PokemonListView()
                     .navigationDestination(for: Destination.self) { destination in
                         switch destination {
                         case .pokemonList:
                             EmptyView()
                         case .pokemonDetail(let pokemon):
-                            let viewModel = DetailViewModel()
-                            DetailView(viewModel: viewModel, pokemon: pokemon)
+                            PokemonDetailView(pokemon: pokemon)
                         }
                     }
             }

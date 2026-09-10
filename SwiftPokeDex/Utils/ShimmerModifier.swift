@@ -12,7 +12,6 @@ struct ShimmerModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            // Usamos un gradiente con tres tonos de gris para simular el brillo
             .overlay(
                 LinearGradient(
                     gradient: Gradient(colors: [
@@ -23,19 +22,17 @@ struct ShimmerModifier: ViewModifier {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
-                .mask(content) // El gradiente solo se dibuja sobre la forma del contenido original
+                .mask(content)
                 .offset(x: phase)
             )
             .onAppear {
-                // Animación lineal continua e infinita
                 withAnimation(.linear(duration: 1.5).repeatForever(autoreverses: false)) {
-                    phase = 300 // Distancia que recorre el brillo
+                    phase = 300
                 }
             }
     }
 }
 
-// Extensión para que sea muy fácil de usar en cualquier vista
 extension View {
     func shimmer() -> some View {
         modifier(ShimmerModifier())

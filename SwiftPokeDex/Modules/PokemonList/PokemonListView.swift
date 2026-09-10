@@ -8,9 +8,9 @@
 import SwiftUI
 import SwiftData
 
-struct ListView: View {
+struct PokemonListView: View {
     // MARK: - Estado y Dependencias
-    @StateObject var viewModel = ListViewModel()
+    @StateObject private var viewModel = PokemonListViewModel()
     @EnvironmentObject private var router: Router
     
     @Environment(\.modelContext) private var modelContext
@@ -31,7 +31,7 @@ struct ListView: View {
             Divider()
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    pokemonListContent // 👈 Primer nivel de abstracción
+                    pokemonListContent 
                 }
                 .padding(.horizontal)
             }
@@ -48,7 +48,6 @@ struct ListView: View {
                 await viewModel.refreshData()
             }
         }
-        .environmentObject(router)
         .task {
             if viewModel.pokemonList.isEmpty {
                 await viewModel.loadPokemonPage()
@@ -58,7 +57,7 @@ struct ListView: View {
 }
 
 // MARK: - Extensiones de Modularización Visual (@ViewBuilder)
-extension ListView {
+extension PokemonListView {
     /// Vista del filtro
     @ViewBuilder
     private var filterTags: some View {
@@ -72,7 +71,6 @@ extension ListView {
                         .fontWeight(.medium)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                    // Si manejas una paleta, puedes usar colores personalizados aquí
                         .background(isSelected ? Color.blue : Color(.systemGray6))
                         .foregroundColor(isSelected ? .white : .primary)
                         .clipShape(Capsule())
@@ -88,12 +86,18 @@ extension ListView {
         }
     }
     
-    /// Orquestador central del contenido dentro del LazyVStack
     @ViewBuilder
     private var pokemonListContent: some View {
         let displayList = viewModel.filteredPokemon(favoriteIds: favoriteIds)
-        if viewModel.selectedTag == .favorites && displayList.isEmpty {
-            emptyListPlaceholder // 👈 Inyectamos el estado vacío limpio
+        if let errorMessage = viewModel.errorMessage, displayList.isEmpty {
+            NetworkErrorView(message: errorMessage) {
+                Task {
+                    await viewModel.loadPokemonPage()
+                }
+            }
+        }
+        else if viewModel.selectedTag == .favorites && displayList.isEmpty {
+            emptyListPlaceholder
         }
         else if displayList.isEmpty && viewModel.isLoading && viewModel.selectedTag == .all {
             initialLoadPlaceholders
@@ -102,7 +106,6 @@ extension ListView {
         }
     }
     
-    /// Muestra las celdas grises animadas de la carga inicial
     @ViewBuilder
     private var initialLoadPlaceholders: some View {
         ForEach(initialPlaceholders, id: \.self) { _ in
@@ -112,9 +115,7 @@ extension ListView {
     
     @ViewBuilder
     private var emptyListPlaceholder: some View {
-        // Componente nativo de Apple para estados vacíos (iOS 17+)
         ContentUnavailableView {
-            // Icono principal estilizado
             Label("No hay favoritos", systemImage: "heart.slash")
                 .font(.title2)
                 .bold()
@@ -126,19 +127,17 @@ extension ListView {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
         }
-        .padding(.top, 60) // Desplaza el contenido un poco hacia el centro de la pantalla
+        .padding(.top, 60)
     }
     
-    /// Bucle principal encargado de pintar las celdas reales y los esqueletos inferiores de paginación
     @ViewBuilder
     private func mainListView(displayList: [PokemonDetail]) -> some View {
         ForEach(displayList) { pokemon in
             let isFav = favoriteIds.contains(pokemon.id)
             Button {
-                print("El router \(router) está navegando hacia el pokemon \(pokemon)")
                 router.push(to: .pokemonDetail(pokemon))
             } label: {
-                ListCell(
+                PokemonRowView(
                     pokemon: pokemon,
                     isFavorite: isFav,
                     onFavorite: toggleFavorite
@@ -148,22 +147,19 @@ extension ListView {
             
             
             .onAppear {
-                // Lógica de paginación proactiva controlada
                 if viewModel.searchText.isEmpty && viewModel.selectedTag == .all && pokemon.id == viewModel.pokemonList.last?.id {
                     Task { await viewModel.loadPokemonPage() }
                 }
             }
         }
         
-        // Esqueletos de carga inferior si estamos haciendo scroll hacia abajo
         if viewModel.isLoading && !viewModel.pokemonList.isEmpty && viewModel.selectedTag == .all {
             ForEach(paginationPlaceholders, id: \.self) { _ in
                 PokemonRowPlaceholder()
             }
         }
     }
-    
-    /// Controlador lógico para persistir o borrar elementos de SwiftData
+
     private func toggleFavorite(for pokemon: PokemonDetail, currentlyFav: Bool) {
         if currentlyFav {
             if let existingFav = favoriteList.first(where: { $0.id == pokemon.id }) {
@@ -188,5 +184,5 @@ extension ListView {
 }
 
 #Preview {
-    ListView(viewModel: ListViewModel())
+    PokemonListView()
 }

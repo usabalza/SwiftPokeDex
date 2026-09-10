@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ListCell: View {
+struct PokemonRowView: View {
     
     var pokemon: PokemonDetail
     var isFavorite: Bool
@@ -27,7 +27,6 @@ struct ListCell: View {
                             .resizable()
                             .scaledToFit()
                     } placeholder: {
-                        // Tu esqueleto animado (Shimmer) que repara el bug visual previo
                         Circle()
                             .fill(Color(.systemGray5))
                     }
@@ -70,23 +69,4 @@ struct ListCell: View {
         
     }
     
-}
-
-struct TypeCapsule: View {
-    var types: [TypeElement]
-    
-    var body: some View {
-        HStack(spacing: 6) {
-            ForEach(types) { typeSlot in
-                Text(typeSlot.type.name.capitalized)
-                    .font(.caption2)
-                    .bold()
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(TypeColor(rawValue: typeSlot.type.name)?.color ?? .gray) // Extensión de color personalizada
-                    .foregroundColor(.white)
-                    .clipShape(Capsule())
-            }
-        }
-    }
 }

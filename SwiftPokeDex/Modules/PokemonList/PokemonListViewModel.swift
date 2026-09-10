@@ -13,40 +13,40 @@ enum ListFilterTag: String, CaseIterable {
     case favorites = "Favoritos"
 }
 
-class ListViewModel: ObservableObject {
+class PokemonListViewModel: ObservableObject {
     
-    let services = APIServices()
+    let services: ServiceProtocol
     
     @Published var pokemonList: [PokemonDetail] = []
     @Published var isLoading = false
     @Published var errorMessage: String? = nil
-    @Published var searchText = "" // 👈 Vinculado al buscador
-    @Published var selectedTag: ListFilterTag = .all // 👈 Tag seleccionado por defecto
+    @Published var searchText = ""
+    @Published var selectedTag: ListFilterTag = .all
     
     private var currentOffset = 0
     private let limit = 20
     
-    // 👈 Propiedad computada para filtrar la lista en tiempo real
+    init(services: ServiceProtocol = APIServices()) {
+        self.services = services
+    }
+    
     func filteredPokemon(favoriteIds: [Int]) -> [PokemonDetail] {
-        // 1. Primero filtramos según el Tag ("Todos" o "Favoritos")
         var baseList = pokemonList
         if selectedTag == .favorites {
             baseList = pokemonList.filter { favoriteIds.contains($0.id) }
         }
-        
-        // 2. Después aplicamos el filtro de texto de la barra de búsqueda
         if searchText.isEmpty {
             return baseList
         } else {
             return baseList.filter { pokemon in
                 pokemon.name.localizedCaseInsensitiveContains(searchText) ||
-                String(pokemon.id).contains(searchText)
+                String(format: "#%03d", pokemon.id).contains(searchText)
             }
         }
     }
     
     func loadPokemonPage() async {
-        guard !isLoading else { return } // Evita peticiones duplicadas
+        guard !isLoading else { return }
         
         isLoading = true
         errorMessage = nil
@@ -58,7 +58,7 @@ class ListViewModel: ObservableObject {
             )
             
             self.pokemonList.append(contentsOf: newPokemon)
-            self.currentOffset += limit // Prepara el offset para la siguiente página
+            self.currentOffset += limit
         } catch {
             self.errorMessage = "Error al cargar los datos: \(error.localizedDescription)"
         }
@@ -66,25 +66,17 @@ class ListViewModel: ObservableObject {
         isLoading = false
     }
     
-    // 👈 Método para el Pull-to-Refresh
-    
     func refreshData() async {
         guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
         
         do {
-            // 1. Descargamos el primer bloque (offset 0) en una variable local
             let freshPokemon = try await services.fetchDetailedPokemonList(
                 limit: limit,
                 offset: 0
             )
-            
-            // 2. Si la red responde bien, reiniciamos los estados de la paginación
             self.currentOffset = limit
-            
-            // 3. Reemplazamos la lista completa de un solo golpe
-            // Esto evita que la UI se quede vacía a mitad de la petición de red
             self.pokemonList = freshPokemon
             
         } catch {
