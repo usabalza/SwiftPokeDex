@@ -58,7 +58,7 @@ The project is safeguarded against regressions using the most modern testing fra
 * **Parameterized tests (`arguments: [...]`)** to test multiple search scenarios within a single logical function.
 * Thread isolation validation via strict synchronization on the `@MainActor`.
 
-### 📱 UI Tests (**UI Tests / XCTest**)
+### 📱 UI Tests (**UI Tests / SwiftTest**)
 * Simulation of real user flows (typing, tapping, scrolling).
 * Automated navigation based on **`accessibilityIdentifier`** to ensure resilience against design changes or text localization.
 
