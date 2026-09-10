@@ -13,14 +13,14 @@ A premium iOS application serving as an interactive Pokédex that consumes the *
 
 ---
 
-## 🚀 Características Clave
+## 🚀 Key Features
 
-* **Navegación Cruzada Infinita**: Implementación de una arquitectura de **Coordinador/Router centralizado** mediante `NavigationStack` y `NavigationPath` nativos, permitiendo saltos de navegación fluidos entre evoluciones con la posibilidad de hacer *Pop to Root* con un solo clic.
-* **Barra de Filtros Sticky**: Layout optimizado para fijar componentes interactivos (*Tags horizontales*) debajo del buscador, aislando el comportamiento del scroll del listado principal.
-* **Persistencia Local Reactiva**: Gestión de favoritos persistentes mediante **SwiftData**, sincronizando el almacenamiento en disco duro (SQLite) con macros `@Query` para actualizaciones de la interfaz en tiempo real.
-* **Gráficos Estadísticos Premium**: Visualización animada de las estadísticas base del Pokémon implementada con **SwiftCharts**, utilizando animaciones elásticas (`.spring`) a 120 FPS estables.
-* **Manejo Resiliente de Estados**: Implementación de interfaces descriptivas ante fallos mediante **`ContentUnavailableView`** para mitigar errores de red (con botón de reintento atómico) y colecciones de favoritos vacías.
-* **Efecto Esqueleto (Shimmer)**: Transición visual placentera a través de un `ViewModifier` personalizado y animaciones lineales infinitas que reemplazan los indicadores de carga tradicionales.
+* **Seamless Cross-Navigation**: Implementation of a **centralized Coordinator/Router** architecture using native `NavigationStack` and `NavigationPath`, enabling fluid navigation transitions between evolutions and a one-tap "Pop to Root" capability.
+* **Sticky Filter Bar**: Optimized layout pinning interactive components (horizontal tags) beneath the search bar, decoupling them from the main list's scrolling behavior.
+* **Reactive Local Persistence**: Management of persistent favorites via **SwiftData**, synchronizing disk storage (SQLite) with `@Query` macros for real-time UI updates.
+* **Premium Statistical Charts**: Animated visualization of base Pokémon stats implemented with **SwiftCharts**, utilizing spring animations (`.spring`) at a stable 120 FPS.
+* **Resilient State Handling**: Implementation of descriptive error states using **`ContentUnavailableView`** to handle network issues (featuring an atomic retry button) and empty favorites collections.
+* **Skeleton (Shimmer) Effect**: A visually pleasing transition using a custom `ViewModifier` and infinite linear animations to replace traditional loading indicators.
 
 ---
 
