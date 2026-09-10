@@ -68,7 +68,7 @@ The project is safeguarded against regressions using the most modern testing fra
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com
+   git clone https://github.com/usabalza/SwiftPokeDex
    ```
 2. Open the `PokeDexApp.xcodeproj` or `PokeDexApp.xcworkspace` file in **Xcode** (Xcode 15 or later is required).
 3. Select your preferred simulator running **iOS 17.0+** and press `Cmd + R` to run the app.
