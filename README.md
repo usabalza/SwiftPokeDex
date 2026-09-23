@@ -7,7 +7,7 @@ A premium iOS application serving as an interactive Pokédex that consumes the *
 
 ## 📸 Screenshots / UI Showcase
 
-| Listado y Filtros (Sticky) | Ficha Técnica Detalle | Estados Vacíos / Errores |
+| List and filters (Sticky) | Detailed data sheet | Empty states and error handling |
 |:---:|:---:|:---:|
 | <img width="1206" height="2622" alt="Image" src="https://github.com/user-attachments/assets/c64c512b-4833-4b77-9e83-1939922697cc" /> | <img width="1206" height="2622" alt="Image" src="https://github.com/user-attachments/assets/c7fb20b3-51f1-4b9a-9574-4f117ed4fa09" /> | <img width="1206" height="2622" alt="Image" src="https://github.com/user-attachments/assets/ec105075-b699-46bb-b4c3-14c79a7e6d00" /> |
 
@@ -33,7 +33,7 @@ A premium iOS application serving as an interactive Pokédex that consumes the *
 * **Persistence**: SwiftData (Atomic contexts using `try modelContext.save()`).
 * **Data Visualization**: SwiftCharts.
 
-### Estructura del Proyecto (Screaming Architecture)
+### Folder structure of the project
 ```text
 📁 PokeDexApp
 ├── 📁 App            # Root lifecycle (@main) and Central Router injection
