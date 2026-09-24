@@ -64,6 +64,3 @@ Developed by **Uziel Sabalza**
 *   **LinkedIn:** [Uziel Sabalza](https://linkedin.com)
 *   **Portfolio:** [Portafolio](https://yourwebsite.com)
 *   **Email:** uziel.sabalza.dev@gmail.com
-
----
-
