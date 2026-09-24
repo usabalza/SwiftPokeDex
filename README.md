@@ -9,7 +9,7 @@ A premium iOS application serving as an interactive Pokédex that consumes the *
 
 | List and filters (Sticky) | Detailed data sheet | Empty states and error handling |
 |:---:|:---:|:---:|
-| <img width="1206" height="2622" alt="Image" src="https://github.com/user-attachments/assets/c64c512b-4833-4b77-9e83-1939922697cc" /> | <img width="1206" height="2622" alt="Image" src="https://github.com/user-attachments/assets/c7fb20b3-51f1-4b9a-9574-4f117ed4fa09" /> | <img width="1206" height="2622" alt="Image" src="https://github.com/user-attachments/assets/ec105075-b699-46bb-b4c3-14c79a7e6d00" /> |
+| <img width="220" alt="Image" src="https://github.com/user-attachments/assets/c64c512b-4833-4b77-9e83-1939922697cc" /> | <img width="220" alt="Image" src="https://github.com/user-attachments/assets/c7fb20b3-51f1-4b9a-9574-4f117ed4fa09" /> | <img width="220" alt="Image" src="https://github.com/user-attachments/assets/ec105075-b699-46bb-b4c3-14c79a7e6d00" /> |
 
 ---
 
@@ -33,20 +33,6 @@ A premium iOS application serving as an interactive Pokédex that consumes the *
 * **Persistence**: SwiftData (Atomic contexts using `try modelContext.save()`).
 * **Data Visualization**: SwiftCharts.
 
-### Folder structure of the project
-```text
-📁 PokeDexApp
-├── 📁 App            # Root lifecycle (@main) and Central Router injection
-├── 📁 Network        # Generic client decoupled via protocols (SOLID)
-├── 📁 Router         # Declarative route management (NavigationPath)
-├── 📁 Models         # Persistent Shared Models (SwiftData)
-├── 📁 Utils          # Generic views and reusable modifiers (Shimmer, Empty States)
-├── 📁 Extensions     # Extension for entering colors in hexadecimal notation
-└── 📁 Modules        # Code encapsulation by screens (Self-contained module)
-    ├── 📁 PokemonList   # List Models, Views (optimized with @ViewBuilder), and ViewModels
-    └── 📁 PokemonDetail # Dense data sheet divided into sub-views with identity isolation.
-```
-
 ---
 
 ## 🧪 Software Quality & Testing
@@ -57,10 +43,6 @@ The project is safeguarded against regressions using the most modern testing fra
 * Coverage of asynchronous flows and formal error handling.
 * **Parameterized tests (`arguments: [...]`)** to test multiple search scenarios within a single logical function.
 * Thread isolation validation via strict synchronization on the `@MainActor`.
-
-### 📱 UI Tests (**UI Tests / SwiftTest**)
-* Simulation of real user flows (typing, tapping, scrolling).
-* Automated navigation based on **`accessibilityIdentifier`** to ensure resilience against design changes or text localization.
 
 ---
 
@@ -76,7 +58,12 @@ The project is safeguarded against regressions using the most modern testing fra
 
 ---
 
-## ✒️ Author
+### 👨‍💻 Author
 
-* **Uziel Sabalza** - *iOS Developer* - [LinkedIn](https://www.linkedin.com/in/uziel-sabalza-a535b6214) | [Tu Portafolio Web](https://tu-web.com)
+Developed by **Uziel Sabalza**
+*   **LinkedIn:** [Uziel Sabalza](https://linkedin.com)
+*   **Portfolio:** [Portafolio](https://yourwebsite.com)
+*   **Email:** uziel.sabalza.dev@gmail.com
+
+---
 
